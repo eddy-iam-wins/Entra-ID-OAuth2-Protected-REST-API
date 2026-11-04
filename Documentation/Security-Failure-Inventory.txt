@@ -1,0 +1,407 @@
+
+PROJECT 5 - OAUTH 2.0 PROTECTED SERVICEDESK REST API
+STEP 5.5.7.2 - SECURITY FAILURE EVIDENCE INVENTORY
+
+PURPOSE
+Document security failures, expected behavior, and supporting evidence
+from OAuth 2.0 authorization and JWT validation testing.
+
+TEST 1 - MISSING BEARER TOKEN
+Expected: HTTP 401 Unauthorized
+Observed: HTTP 401 Unauthorized
+Result: PASS
+Evidence: Step 5.5.5 screenshots
+
+TEST 2 - INVALID BEARER TOKEN
+Expected: HTTP 401 Unauthorized
+Observed: HTTP 401 Unauthorized
+Result: PASS
+Evidence: Step 5.5.5 screenshots
+
+TEST 3 - INSUFFICIENT OAUTH SCOPE
+Expected: HTTP 403 Forbidden
+Observed: HTTP 403 Forbidden
+Result: PASS
+Evidence: Step 5.5.4 screenshots
+
+TEST 4 - MALFORMED JWT
+Expected: HTTP 401 Unauthorized
+Observed: HTTP 401 Unauthorized
+Result: PASS
+Evidence: Figure 5.43
+
+TEST 5 - TAMPERED JWT SIGNATURE
+Expected: HTTP 401 Unauthorized
+Observed: HTTP 401 Unauthorized
+Result: PASS
+Evidence: Figure 5.44
+
+TEST 6 - EXPIRED JWT
+Expected: HTTP 401 Unauthorized
+Observed: HTTP 401 Unauthorized
+Result: PASS
+Evidence: Figures 5.45, 5.46, and 5.47
+
+TEST 7 - INCORRECT JWT AUDIENCE (ISOLATED TEST)
+Expected: InvalidAudienceError
+Observed: InvalidAudienceError
+Result: PASS
+Evidence: Figure 5.48
+Note: This was an isolated PyJWT validation test, not a live API request.
+
+TEST 8 - MICROSOFT GRAPH TOKEN SENT TO SERVICEDESK API
+Expected: Unauthorized request rejected
+Observed: HTTP 401 Unauthorized
+Result: PASS
+Evidence: Figure 5.49
+Root cause observed: InvalidSignatureError
+Note: Audience-specific rejection was not established by this test.
+
+SUMMARY
+All eight security scenarios produced their expected outcomes.
+No changes were made to weaken the ServiceDesk API security controls.
+
+
+=======================================================
+STEP 5.5.7.3 - ROOT CAUSE AND SECURITY BEHAVIOR ANALYSIS
+=======================================================
+
+TEST 1 - MISSING BEARER TOKEN
+Root Cause:
+The request did not contain an Authorization header
+with a Bearer access token.
+
+Expected Security Behavior:
+The ServiceDesk API denies unauthenticated requests.
+
+Observed Result:
+HTTP 401 Unauthorized.
+
+Security Principle:
+Authentication is required before accessing protected resources.
+
+
+TEST 2 - INVALID BEARER TOKEN
+Root Cause:
+The supplied bearer token was not a valid JWT
+accepted by the ServiceDesk API.
+
+Expected Security Behavior:
+The API rejects invalid credentials.
+
+Observed Result:
+HTTP 401 Unauthorized.
+
+Security Principle:
+Only valid access tokens may be used to access
+protected API endpoints.
+
+
+TEST 3 - INSUFFICIENT OAUTH SCOPE
+Root Cause:
+The access token did not contain the delegated
+permission required by the requested API operation.
+
+Expected Security Behavior:
+The API denies access even when the token itself
+is valid.
+
+Observed Result:
+HTTP 403 Forbidden.
+
+Security Principle:
+Least privilege and scope-based authorization.
+
+
+TEST 4 - MALFORMED JWT
+Root Cause:
+The supplied JWT did not have a valid token structure.
+
+Expected Security Behavior:
+The API rejects malformed JWTs.
+
+Observed Result:
+HTTP 401 Unauthorized.
+
+Security Principle:
+Token structure and integrity validation.
+
+
+TEST 5 - TAMPERED JWT SIGNATURE
+Root Cause:
+The JWT signature was modified after the token
+was issued.
+
+Expected Security Behavior:
+Cryptographic signature verification fails.
+
+Observed Result:
+HTTP 401 Unauthorized.
+
+Security Principle:
+Token integrity and cryptographic verification.
+
+
+TEST 6 - EXPIRED JWT
+Root Cause:
+The token expiration time had passed.
+
+Expected Security Behavior:
+The API rejects expired access tokens.
+
+Observed Result:
+HTTP 401 Unauthorized.
+
+Security Principle:
+Time-limited access and token lifetime enforcement.
+
+
+TEST 7 - INCORRECT JWT AUDIENCE
+Root Cause:
+The JWT audience claim did not match the
+expected ServiceDesk API audience.
+
+Expected Security Behavior:
+Audience validation rejects the token.
+
+Observed Result:
+InvalidAudienceError.
+
+Security Principle:
+Audience restriction prevents a token intended
+for another resource from being accepted.
+
+Test Limitation:
+This result was demonstrated using an isolated
+PyJWT unit test with locally generated RSA keys.
+It was not a live ServiceDesk API HTTP request.
+
+
+TEST 8 - MICROSOFT GRAPH TOKEN SENT TO SERVICEDESK API
+Root Cause:
+The Microsoft Graph access token failed signature
+verification using the ServiceDesk API's configured
+JWT validation settings.
+
+Expected Security Behavior:
+The ServiceDesk API rejects the token.
+
+Observed Result:
+HTTP 401 Unauthorized.
+JWT failure type: InvalidSignatureError.
+
+Security Principle:
+The API must verify token signatures using
+trusted signing keys before granting access.
+
+Test Limitation:
+Although the token was intended for Microsoft Graph,
+the observed rejection was caused by signature
+verification failure, not InvalidAudienceError.
+
+
+CONCLUSION
+All eight security scenarios demonstrated the
+expected rejection or authorization behavior.
+
+The ServiceDesk API enforced authentication,
+token validation, token expiration, and
+scope-based authorization.
+
+The isolated audience test separately demonstrated
+PyJWT audience enforcement.
+
+No security controls were disabled or weakened
+to obtain successful test results.
+
+
+
+=======================================================
+STEP 5.5.7.4 - TROUBLESHOOTING AND REMEDIATION
+=======================================================
+
+TEST 1 - MISSING BEARER TOKEN
+
+Investigation:
+Sent a request to the protected /api/tickets endpoint
+without an Authorization header.
+
+Finding:
+The API returned HTTP 401 Unauthorized.
+
+Remediation:
+No API remediation required. For legitimate access,
+the client must obtain a valid access token and
+include it in the Authorization: Bearer header.
+
+Verification:
+The unauthenticated request was rejected with HTTP 401.
+
+
+TEST 2 - INVALID BEARER TOKEN
+
+Investigation:
+Submitted an invalid bearer token to the
+protected ServiceDesk API.
+
+Finding:
+The API rejected the invalid credential.
+
+Remediation:
+No API remediation required. The client must obtain
+a valid token from Microsoft Entra ID rather than
+submitting an invalid credential.
+
+Verification:
+The invalid token request returned HTTP 401.
+
+
+TEST 3 - INSUFFICIENT OAUTH SCOPE
+
+Investigation:
+Submitted a valid access token without the delegated
+scope required by the requested API operation.
+
+Finding:
+The token passed authentication but did not
+authorize the requested operation.
+
+Remediation:
+No API remediation required. If the user is
+authorized for the operation, the appropriate
+delegated permission must be configured and
+consented to, and a new token requested.
+
+Verification:
+The API returned HTTP 403 Forbidden when the
+required scope was missing.
+
+
+TEST 4 - MALFORMED JWT
+
+Investigation:
+Submitted a malformed JWT to the protected API.
+
+Finding:
+The JWT did not satisfy the expected token format.
+
+Remediation:
+No API remediation required. The API must continue
+rejecting malformed tokens. A legitimate client
+must obtain a correctly issued access token.
+
+Verification:
+The API returned HTTP 401 Unauthorized.
+
+
+TEST 5 - TAMPERED JWT SIGNATURE
+
+Investigation:
+Modified the signature portion of an issued JWT
+without changing its header or payload.
+
+Finding:
+The original token was accepted, while the
+modified token was rejected.
+
+Remediation:
+No API remediation required. Cryptographic signature
+validation must remain enabled. A legitimate client
+must obtain a new, unmodified access token.
+
+Verification:
+Original token: HTTP 200.
+Tampered token: HTTP 401.
+
+
+TEST 6 - EXPIRED JWT
+
+Investigation:
+Inspected the token expiration timestamp and
+retested access after the token expired.
+
+Finding:
+The API rejected the expired token.
+
+Remediation:
+A legitimate client must acquire a fresh access
+token through an appropriate OAuth flow.
+Expiration validation must remain enabled.
+
+Troubleshooting Improvement:
+Updated the validator exception handling to log
+the specific ExpiredSignatureError condition.
+
+Verification:
+The API returned HTTP 401 and logged:
+JWT expiration validation: FAIL - Token expired
+
+
+TEST 7 - INCORRECT JWT AUDIENCE
+
+Investigation:
+Submitted a Microsoft Graph access token to the
+ServiceDesk API and inspected the rejection logs.
+
+Finding:
+The live request returned HTTP 401 due to
+InvalidSignatureError, not InvalidAudienceError.
+
+Additional Test:
+Created a separate PyJWT unit test with temporary
+RSA signing keys and correct/incorrect audiences.
+
+Remediation:
+No API remediation required. Retained the existing
+signature and audience verification settings.
+
+Verification:
+Correct audience: Validation PASS.
+Incorrect audience: InvalidAudienceError.
+The audience-specific result was demonstrated
+in an isolated unit test.
+
+
+TEST 8 - MICROSOFT GRAPH TOKEN REJECTION
+
+Investigation:
+Obtained a Microsoft Graph access token through
+the ServiceDesk Client and sent it to /api/tickets.
+
+Finding:
+The ServiceDesk API rejected the token with HTTP 401.
+The validator reported InvalidSignatureError.
+
+Remediation:
+No API remediation required. The client must use
+an access token issued for the ServiceDesk API.
+The API's existing signature verification settings
+were preserved.
+
+Verification:
+The live Microsoft Graph token request returned
+HTTP 401 Unauthorized.
+
+
+FINAL REMEDIATION SUMMARY
+
+Security controls preserved:
+- RS256 signature verification
+- Trusted signing-key validation
+- Issuer validation
+- Audience validation
+- Token expiration enforcement
+- Delegated OAuth scope authorization
+
+Troubleshooting improvements:
+- Added explicit expired-token diagnostic logging
+- Added audience-validation diagnostic handling
+- Added exception-type logging for JWT failures
+- Created an isolated audience-validation test
+
+No security validation was disabled to make
+a negative test succeed.
+
+The observed HTTP 401 and HTTP 403 responses
+represent successful security enforcement.
+
