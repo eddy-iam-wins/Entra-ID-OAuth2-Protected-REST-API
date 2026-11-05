@@ -2,6 +2,29 @@
 
 # Microsoft Entra ID OAuth 2.0 — Protected ServiceDesk REST API
 
+## Table of Contents
+
+- [Project Overview](#project-overview)
+- [Business Scenario](#business-scenario)
+- [Business Problem](#business-problem)
+- [Solution Implemented](#solution-implemented)
+- [Architecture](#architecture)
+- [Technologies Used](#technologies-used)
+- [Microsoft Entra ID Application Registrations](#microsoft-entra-id-application-registrations)
+- [OAuth 2.0 Authorization Code Flow with PKCE](#oauth-20-authorization-code-flow-with-pkce)
+- [Delegated API Permissions](#delegated-api-permissions)
+- [Access Token Analysis](#access-token-analysis)
+- [Protected ServiceDesk REST API](#protected-servicedesk-rest-api)
+- [JWT Security Validation](#jwt-security-validation)
+- [Authorization Testing](#authorization-testing)
+- [Troubleshooting and Security Failure Testing](#troubleshooting-and-security-failure-testing)
+- [Security Practices](#security-practices)
+- [Installation and Local Lab Setup](#installation-and-local-lab-setup)
+- [Repository Structure](#repository-structure)
+- [Implementation Evidence](#implementation-evidence)
+- [IAM Skills Demonstrated](#iam-skills-demonstrated)
+- [Project Outcome](#project-outcome)
+
 ## Project Overview
 
 This hands-on Identity and Access Management (IAM) project demonstrates how Microsoft Entra ID can secure a custom REST API using **OAuth 2.0 Authorization Code Flow with PKCE**, delegated API permissions, and JSON Web Token (JWT) validation.
