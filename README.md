@@ -1,6 +1,6 @@
 
 
-# Microsoft Entra ID OAuth 2.0 â€” Protected ServiceDesk REST API
+# Microsoft Entra ID OAuth 2.0 — Protected ServiceDesk REST API
 
 ## Project Overview
 
@@ -346,7 +346,7 @@ The MSAL library also reported a recommendation to use `response_mode='form_post
 
 - Web browser
 
-### Step 1 â€” Clone the Repository
+### Step 1 — Clone the Repository
 
 Open PowerShell and run:
 
@@ -358,7 +358,7 @@ cd Entra-ID-OAuth2-Protected-REST-API
 
 ```
 
-### Step 2 â€” Configure Microsoft Entra ID
+### Step 2 — Configure Microsoft Entra ID
 
 Create two application registrations.
 
@@ -380,7 +380,7 @@ Create two application registrations.
 
 - Configure consent according to the tenant's policies.
 
-### Step 3 â€” Configure Environment Variables
+### Step 3 — Configure Environment Variables
 
 The repository provides two sanitized configuration templates:
 
@@ -424,7 +424,7 @@ Use the exact API scope URI and expected token audience from your application re
 
 Never publish actual client secrets, bearer tokens, or private `.env` files.
 
-### Step 4 â€” Install ServiceDesk API Dependencies
+### Step 4 — Install ServiceDesk API Dependencies
 
 Open PowerShell from the repository root:
 
@@ -440,7 +440,7 @@ python -m pip install -r requirements.txt
 
 ```
 
-### Step 5 â€” Install ServiceDesk Client Dependencies
+### Step 5 — Install ServiceDesk Client Dependencies
 
 Open a second PowerShell terminal from the repository root:
 
@@ -456,7 +456,7 @@ python -m pip install -r requirements.txt
 
 ```
 
-### Step 6 â€” Start the ServiceDesk API
+### Step 6 — Start the ServiceDesk API
 
 In the API PowerShell terminal:
 
@@ -478,7 +478,7 @@ Invoke-RestMethod -Uri "http://localhost:5001/health" -Method Get
 
 ```
 
-### Step 7 â€” Start the ServiceDesk Client
+### Step 7 — Start the ServiceDesk Client
 
 In the client PowerShell terminal:
 
@@ -494,7 +494,7 @@ Open:
 
 Complete the Microsoft Entra ID authentication and authorization process.
 
-### Step 8 â€” Test Protected API Authorization
+### Step 8 — Test Protected API Authorization
 
 Use the authenticated client and its access token to test the protected ServiceDesk API.
 
